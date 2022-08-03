@@ -1,0 +1,64 @@
+import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+
+public class Clone {
+
+
+    public AndroidDriver driver;
+
+    @BeforeMethod
+    public void setUp() throws MalformedURLException {
+
+
+        String appiumServerURL = "http://127.0.0.1:4723/wd/hub";
+        DesiredCapabilities dc =new DesiredCapabilities();
+        dc.setCapability("deviceName","Huwaei Nova 3i");
+        dc.setCapability("udid","JUC7N18710010424");
+        dc.setCapability("platformName","Android");
+        dc.setCapability("platformVersion","9");
+        dc.setCapability("appPackage","com.android.calculator2");
+        dc.setCapability("appActivity","com.android.calculator2.Calculator");
+
+        System.out.println("Before Method executed.");
+        driver= new AndroidDriver(new URL(appiumServerURL), dc);
+        System.out.println("Application Started");
+    }
+
+    @Test
+    public void secondTest() throws InterruptedException
+    {
+
+         WebElement two = driver.findElement(By.id("com.yes.calculator2:id/digit2"));
+         WebElement plus = driver.findElement(By.id("com.yes.calculator2:id/plus"));
+         WebElement three = driver.findElement(By.id("com.yes.calculator2:id/digit3"));
+         WebElement equals = driver.findElement(By.id("com.yes.calculator2:id/equals"));
+         WebElement result = driver.findElement(By.className("android.widget.EditText"));
+
+         two.click();
+         plus.click();
+         three.click();
+         equals.click();
+
+         String res = result.getText();
+         System.out.println("Result is:"+res);
+         System.out.println("completed");
+
+
+
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        System.out.println("After Method executed");
+    }
+}
+
