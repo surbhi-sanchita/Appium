@@ -1,0 +1,560 @@
+package org.example;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
+
+import java.sql.SQLOutput;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+public class Standalone {
+
+    public static void main(String[] args) throws InterruptedException {
+
+
+        WebDriverManager.chromedriver().setup();
+        //System.setProperty("webdriver.chrome.driver","C:\\Users\\surbhi.sanchita\\Downloads\\chromedriver_win32\\chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+
+
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+
+        String userName = "shashi.narayan@unilever.com";
+        String password = "install";
+        String name = userName.split("\\.")[0];
+        System.out.println(StringUtils.capitalize(name));
+        String capitalizeName = StringUtils.capitalize(name);
+        driver.get("https://unilvr-sit.pegacloud.net/prweb");
+        driver.manage().deleteAllCookies();
+
+
+        driver.findElement(By.xpath("//div[contains(@class,'field user')]/input[contains(@class,'inputBox')]")).sendKeys(userName);
+        driver.findElement(By.xpath("//div[contains(@class,'field password')]/input[contains(@class,'inputBox')]")).sendKeys(password, Keys.ENTER);
+        Thread.sleep(4000);
+        /*
+         * try { WebElement generalData =
+         * driver.findElement(By.xpath("(//h3[contains(text(),'General Data')])[1]"));
+         * if(generalData.getText().equalsIgnoreCase("General Data")) {
+         * driver.findElement(By.
+         * xpath("//i[contains(@class,'icons pi pi-circle-close-solid left-nav-icons')]"
+         * )).click(); } } catch(Exception e) { System.out.println(e); }
+         */
+
+
+         //validate User name on homepage
+        try {
+
+            WebElement welcomeUserName = driver.findElement(By.xpath(" //div[contains(@class,'content-item content-layout item-1 remove-top-spacing remove-left-spacing flex flex-row')]/div[contains(@class,'flex content layout-content-inline  content-inline')] "));
+            System.out.println(welcomeUserName.getText());
+            Assert.assertEquals(welcomeUserName.getText(), "Hello\n" + capitalizeName + "\n,");
+            //click on plus icon
+            driver.findElement(By.xpath("//i[contains(@class,'icons pi pi-circle-close-solid left-nav-icons')]")).click();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        //if project scoping page appears
+        try {
+            WebElement projectScoping = driver.findElement(By.xpath("//div[contains(@class,'header header-bar clearfix case_heading case_heading_new')]/div[contains(@class,'header-content')]/h3[contains(@class,'header-title')]"));
+            if (projectScoping.getText().equalsIgnoreCase("Project Scoping")) {
+                //click on plus icon
+                driver.findElement(By.xpath("//i[contains(@class,'icons pi pi-circle-close-solid left-nav-icons')]")).click();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        //if Network Plan page appears
+        try {
+            WebElement projectScoping = driver.findElement(By.xpath("//div[contains(@class,'header header-bar clearfix case_heading case_heading_new')]/div[contains(@class,'header-content')]/h3[contains(text(),'Network Plan')]"));
+            if (projectScoping.getText().equalsIgnoreCase("Network Plan")) {
+                //click on plus icon
+                driver.findElement(By.xpath("//i[contains(@class,'icons pi pi-circle-close-solid left-nav-icons')]")).click();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
+        // click on yes
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//label[contains(text(),'Yes')]")).click();
+       // driver.findElement(By.xpath("(//span[contains(@class,'col-11')]/label[contains(@class,'rb_ul_segmented rb_standard radioLabel')])[last()]")).click();
+        // Enter Project name
+        driver.findElement(By.xpath("//input[contains(@class,'leftJustifyStyle')]")).sendKeys("Unilever");
+
+        // click on dropdown project type and select from dropdown
+        //WebElement projectType = driver.findElement(By.xpath(
+                //"//div[contains(@class,'content-item content-field item-2 flex')]/div[contains(@class,'field-item dataValueWrite')]/select[contains(@class,'ul_standard')]"));
+        //Select sel = new Select(projectType);
+       // sel.selectByIndex(1);
+
+        WebElement projectType = driver.findElement(By.xpath(
+                "//div[contains(@class,'content-item content-field item-2 flex')]/div[contains(@class,'field-item dataValueWrite')]/select[contains(@class,'ul_standard')]"));
+        Select sel = new Select(projectType);
+        List<WebElement> projectSubtypes = sel.getOptions();
+        WebElement projectsubtype = projectSubtypes.stream().filter(ProjectSub->ProjectSub.getText().equalsIgnoreCase("Innovation/Hard-Change")).findFirst().get();
+        projectsubtype.click();
+
+        // Click on dropdown project subtype and select from dropdown
+        try {
+
+            Thread.sleep(2000);
+            //WebElement projectSubType = driver.findElement(By.xpath(
+                   // "//div[contains(@class,'content-item content-field item-3 flex required')]/div[contains(@class,'field-item dataValueWrite')]/select[contains(@class,'ul_standard')]"));
+            //Select sel1 = new Select(projectSubType);
+            //sel1.selectByValue("Standard-Local");
+
+
+
+
+
+        } catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+
+
+        // Click on category and enter values
+        driver.findElement(By.xpath(
+                        "//div[contains(@class,'content-item content-field item-4 flex required')]/div[contains(@class,'field-item dataValueWrite')]/input[contains(@class,'autocomplete_input ac_ul_standard')]"))
+                .sendKeys("HC-Home & Hygiene");
+
+        Thread.sleep(2000);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        //js.executeScript("document.querySelector(\"div[class='content-item content-sub_section item-1'] div[class*='content-inner']\").scrollIntoView(0,200)");
+        js.executeScript("document.querySelector(\"main[class*='screen-layout-region screen-layout-region-main screen-layout-region-main-m']\").scrollTo(0,1000)");
+        Thread.sleep(2000);
+
+        // Enter values in lead country
+        driver.findElement(By.xpath(
+                        "//div[contains(@class,'content-item content-field item-5 flex required')]/div[contains(@class,'field-item dataValueWrite')]/input[contains(@class,'autocomplete_input ac_ul_standard')]"))
+                .click();
+        Thread.sleep(2000);
+        driver.findElement(By.xpath(
+                        "//div[contains(@class,'content-item content-field item-5 flex required')]/div[contains(@class,'field-item dataValueWrite')]/input[contains(@class,'autocomplete_input ac_ul_standard')]"))
+                .sendKeys(Keys.UP);
+        Thread.sleep(2000);
+        js.executeScript("document.querySelector(\"#gridLayoutWrapper\").scrollTo(0,1500)");
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//span[contains(text(),'VA-Vatican City-NA')]")).click();
+
+        // Enter the values in Selling countries
+        Thread.sleep(3000);
+        driver.findElement(By.xpath("//i[contains(@class,'caret-d')]")).click();
+
+
+        Thread.sleep(3000);
+
+        /*
+         * List<WebElement> countries=driver.findElements(By.xpath(
+         * "//span[contains(@class,'ms-primary-option')]")); for(int
+         * i=0;i<countries.size();i++) { System.out.println(countries.get(i).getText());
+         *
+         * }
+         */
+
+        List<WebElement> sellingCountires = driver
+                .findElements(By.xpath("//span[contains(@class,'ms-primary-option')]"));
+        try
+        {
+            WebElement nONorway = sellingCountires.stream() .filter(country ->
+                    country.getText().equalsIgnoreCase("ES-Spain")).findFirst().get();
+            nONorway.click();
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        try {
+
+            Thread.sleep(2000);
+            WebElement frFrance = sellingCountires.stream().filter(Country->Country.getText().equalsIgnoreCase(
+                    "FR-France")).findFirst().get();
+            frFrance.click();
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        try {
+            Thread.sleep(2000);
+            WebElement chSwitserland = sellingCountires.stream().filter(Country->Country.getText().equalsIgnoreCase(
+                    "CH-Switzerland")).findFirst().get();
+            chSwitserland.click();
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+
+        //Click on Selling countries
+        //driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-6 flex required')]/label[contains(@class,'field-caption dataLabelForWrite ul_label_dataLabelForWrite icon-required')]")).click();
+
+        //Click on Project Detail and Enter values
+        driver.findElement(By.xpath("//textarea[contains(@class,'TANORM textAreaStyle')]")).sendKeys("Hello it is a nice Project");
+
+        //Click on Create Project Btn
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Strong pzhc pzbutton')]")).click();
+
+        Thread.sleep(3000);
+        //click on yesBtn in PopUp
+        driver.findElement(By.xpath("//div[contains(@class,' flex content layout-content-inline  content-inline  centered margin-t-2x')]/div[contains(@class,'content-item content-field item-1 remove-all-spacing flex flex-row centered margin-r-2x dataValueWrite')]/span/button[contains(@class,'UL_Strong pzhc pzbutton')]")).click();
+        Thread.sleep(5000);
+
+        //on project scoping , click on up arrow which is at bottom right corner
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Link pzhc pzbutton')]/img[contains(@class,'pzbtn-img pzbtn-extimg')]")).click();
+
+
+        //read case id no
+        WebElement caseIDInProjectScoping = driver.findElement(By.xpath(
+                "//div[contains(@class,'content-item content-field item-1 remove-top-spacing remove-left-spacing flex')]/div[contains(@class,'field-item dataValueRead')]/span[contains(@class,'ul_project_info')]"));
+        String caseProjectID = caseIDInProjectScoping.getText();
+        System.out.println(caseIDInProjectScoping.getText());
+
+        //on project scoping , in Regional/locale Project select values from dropdown
+        WebElement regional = driver.findElement(By.xpath("//div[contains(@class,'field-item dataValueWrite')]/select[contains(@name,'$PpyWorkPage$pBasicInfo$pRegOrGloProject')]"));
+
+        Thread.sleep(2000);
+        Select select = new Select(regional);
+        select.selectByIndex(1);
+        Thread.sleep(3000);
+        // shrink general data tab
+        driver.findElement(By.xpath("//div[contains(@title,'General Data')]/i[contains(@class,'icon icon-openclose')]")).click();
+        Thread.sleep(3000);
+
+        //expand Other Info
+        driver.findElement(By.xpath("//div[contains(@title,'Other info')]/i[contains(@class,'icon icon-openclose')]")).click();
+        Thread.sleep(3000);
+        js.executeScript("document.querySelector(\"main[class*='screen-layout-region screen-layout-region-main screen-layout-region-main-m']\").scrollTo(0,500)");
+
+        //Click on what is the change
+        Thread.sleep(3000);
+        WebElement whatIsTheChange=driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-2 flex required')]/div[contains(@class,'field-item dataValueWrite')]/select[contains(@class,'ul_standard')]"));
+
+        Select s1=new Select(whatIsTheChange);
+        s1.selectByIndex(3);
+
+        //Enter values in 12 months pieces
+        driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-3 flex')]/div[contains(@class,'field-item dataValueWrite')]/span[contains(@class,'ul_standard')]/input[contains(@class,'leftJustifyStyle')]")).sendKeys("12");
+
+        //Enter values in Incremental turn over
+        driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-4 flex')]/div[contains(@class,'field-item dataValueWrite')]/span[contains(@class,'ul_standard')]/input[contains(@class,'leftJustifyStyle')]")).sendKeys("13");
+
+        //Enter values in 12 months turn over
+        driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-5 flex')]/div[contains(@class,'field-item dataValueWrite')]/span[contains(@class,'ul_standard')]/input[contains(@class,'leftJustifyStyle')]")).sendKeys("13");
+
+        //Enter values in New gross margin
+        driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-6 flex')]/div[contains(@class,'field-item dataValueWrite')]/span[contains(@class,'ul_standard')]/input[contains(@class,'leftJustifyStyle')]")).sendKeys("14");
+
+        //Enter values in Country brand average margin %
+        driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-7 flex')]/div[contains(@class,'field-item dataValueWrite')]/span[contains(@class,'ul_standard')]/input[contains(@class,'leftJustifyStyle')]")).sendKeys("15");
+
+        //Select values from dropdowm Hard cut-over or flowthrough
+       WebElement flowthrough =  driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-8 remove-bottom-spacing remove-right-spacing flex')]/div[contains(@class,'field-item dataValueWrite')]/select[contains(@class,'ul_standard')]"));
+       Select select2 = new Select(flowthrough);
+       select2.selectByIndex(1);
+
+         //Shrink back other info
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//div[contains(@title,'Other info')]/i[contains(@class,'icon icon-openclose')]")).click();
+
+        // Expand on key milestone
+        driver.findElement(By.xpath("//div[contains(@title,'Key Milestones')]/i[contains(@class,'icon icon-openclose')]")).click();
+
+        //Click on Artwork Release Date Calendar
+       // driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-4 flex ul_date_field date_time_field')]/div[contains(@class,'field-item dataValueWrite')]/span/img[contains(@class,'inactvIcon')]")).click();
+
+        //Calendar to grab a month
+
+        //WebElement captureMonth = driver.findElement(By.xpath("(//input[contains(@class,'spinner-input')])[1]"));
+        //System.out.println(captureMonth.getText());
+
+
+        Thread.sleep(2000);
+        js.executeScript("document.querySelector(\"main[class*='screen-layout-region screen-layout-region-main screen-layout-region-main-m']\").scrollTo(500,1200)");
+
+        //Enter dates
+        LocalDate currentdate = LocalDate.now();
+        int currentDay = currentdate.getDayOfMonth();
+        Month currentMonth = currentdate.getMonth();
+        int currentMonthInInteger = currentMonth.getValue();
+        int currentYear = currentdate.getYear();
+        String date = Integer.toString(currentDay);
+
+
+
+        // Enter date on Artwork Release Date Calendar
+        try {
+            if ((currentMonth.toString().equalsIgnoreCase("NOVEMBER"))
+                    || currentMonth.toString().equalsIgnoreCase("DECEMBER")) {
+                currentYear++;
+                int feb = currentMonth.FEBRUARY.getValue();
+                if(date.equals("29"))
+                {
+                    if(currentYear%4==0&&currentYear%100!=0||(currentYear%400)==0)
+                    {
+                        feb=feb+0;
+
+                    }
+                    else
+                    {
+                        feb=feb+1;
+                    }
+
+                }
+                if(date.equals("30")||date.equals("31"))
+                {
+                    feb++;
+                }
+
+
+                String month1 = Integer.toString(feb);
+                System.out.println(month1);
+                String nextYear = Integer.toString(currentYear);
+                System.out.println(nextYear);
+
+
+
+                System.out.println(date + "/" + month1 + "/" + nextYear);
+                driver.findElement(By.xpath(
+                                "//div[contains(@class,'content-item content-field item-4 flex ul_date_field date_time_field')]/div[contains(@class,'field-item dataValueWrite')]/span/input[contains(@class,'inactvDtTmTxt')]"))
+                        .sendKeys(date + "/" + month1 + "/" + nextYear);
+
+
+
+            } else {
+                currentMonthInInteger++;
+                currentMonthInInteger++;
+                String setMonthForArtwork = Integer.toString(currentMonthInInteger);
+                String year = Integer.toString(currentYear);
+                System.out.println(date + "/" + setMonthForArtwork + "/" + year);
+                driver.findElement(By.xpath(
+                                "//div[contains(@class,'content-item content-field item-4 flex ul_date_field date_time_field')]/div[contains(@class,'field-item dataValueWrite')]/span/input[contains(@class,'inactvDtTmTxt')]"))
+                        .sendKeys(date + "/" + setMonthForArtwork + "/" + year);
+
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println(e);
+        }
+
+
+
+        // Enter date on First Production Date Calendar
+
+
+
+        try {
+            if ((currentMonth.toString().equalsIgnoreCase("NOVEMBER"))
+                    || currentMonth.toString().equalsIgnoreCase("DECEMBER")) {
+
+
+
+                int may = currentMonth.MAY.getValue();
+                String month3 = Integer.toString(may);
+                System.out.println(month3);
+                String nextYear = Integer.toString(currentYear);
+                System.out.println(nextYear);
+
+
+
+                System.out.println(date + "/" + month3 + "/" + nextYear);
+                driver.findElement(By.xpath(
+                                "//div[contains(@class,'content-item content-field item-5 flex ul_date_field date_time_field')]/div[contains(@class,'field-item dataValueWrite')]/span/input[contains(@class,'inactvDtTmTxt')]"))
+                        .sendKeys(date + "/" + month3 + "/" + nextYear);
+            } else if (currentMonth.toString().equalsIgnoreCase("SEPTEMBER")
+                    || currentMonth.toString().equalsIgnoreCase("OCTOBER")) {
+                currentYear++;
+                int feb = currentMonth.FEBRUARY.getValue();
+                if(date.equals("29"))
+                {
+                    if(currentYear%4==0&&currentYear%100!=0||(currentYear%400)==0)
+                    {
+                        feb=feb+0;
+
+                    }
+                    else
+                    {
+                        feb=feb+1;
+                    }
+
+                }
+                if(date.equals("30")||date.equals("31"))
+                {
+                    feb++;
+                }
+                String month2 = Integer.toString(feb);
+                String nextYear = Integer.toString(currentYear);
+                System.out.println(nextYear);
+
+
+
+                System.out.println(date + "/" + month2 + "/" + nextYear);
+                driver.findElement(By.xpath(
+                                "//div[contains(@class,'content-item content-field item-5 flex ul_date_field date_time_field')]/div[contains(@class,'field-item dataValueWrite')]/span/input[contains(@class,'inactvDtTmTxt')]"))
+                        .sendKeys(date + "/" + month2 + "/" + nextYear);
+
+
+
+            } else {
+                currentMonthInInteger++;
+                currentMonthInInteger++;
+                String setMonthForArtwork = Integer.toString(currentMonthInInteger);
+                String year = Integer.toString(currentYear);
+                System.out.println(date + "/" + setMonthForArtwork + "/" + year);
+                driver.findElement(By.xpath(
+                                "//div[contains(@class,'content-item content-field item-5 flex ul_date_field date_time_field')]/div[contains(@class,'field-item dataValueWrite')]/span/input[contains(@class,'inactvDtTmTxt')]"))
+                        .sendKeys(date + "/" + setMonthForArtwork + "/" + year);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println(e);
+        }
+
+
+
+        // Enter date on Stock In Warehouse Start Date Calendar
+
+
+
+        try {
+            if (!(currentMonth.toString().equalsIgnoreCase("MAY") || currentMonth.toString().equalsIgnoreCase("JUNE")
+                    || (currentMonth.toString().equalsIgnoreCase("JULY")))) {
+
+
+
+                int dec = currentMonth.DECEMBER.getValue();
+                String december = Integer.toString(dec);
+                String nextYear = Integer.toString(currentYear);
+                System.out.println(nextYear);
+
+
+
+                System.out.println(date + "/" + december + "/" + nextYear);
+                driver.findElement(By.xpath(
+                                "//div[contains(@class,'content-item content-field item-6 remove-bottom-spacing remove-right-spacing flex ul_date_field date_time_field required')]/div[contains(@class,'field-item dataValueWrite')]/span/input[contains(@class,'inactvDtTmTxt')]"))
+                        .sendKeys(date + "/" + december + "/" + nextYear);
+            }
+
+
+
+            else {
+                currentYear++;
+                int apr = currentMonth.MAY.getValue();
+                String april = Integer.toString(apr);
+                String nextYear = Integer.toString(currentYear);
+                System.out.println(nextYear);
+
+
+
+                System.out.println(date + "/" + april + "/" + nextYear);
+                driver.findElement(By.xpath(
+                                "//div[contains(@class,'content-item content-field item-6 remove-bottom-spacing remove-right-spacing flex ul_date_field date_time_field required')]/div[contains(@class,'field-item dataValueWrite')]/span/input[contains(@class,'inactvDtTmTxt')]"))
+                        .sendKeys(date + "/" + april + "/" + nextYear);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println(e);
+        }
+
+
+
+
+
+
+
+
+        //Shrink key mile stones
+        driver.findElement(By.xpath("//div[contains(@title,'Key Milestones')]/i[contains(@class,'icon icon-openclose')]")).click();
+        Thread.sleep(2000);
+        //click on Save
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Secondary pzhc pzbutton')]")).click();
+        Thread.sleep(2000);
+        //Click on OK btn in popup
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Strong pzhc pzbutton')]")).click();
+        Thread.sleep(2000);
+        //Click on next Btn
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Strong pzhc pzbutton')]")).click();
+        //Click on Ok in popUp confirmation Message
+        Thread.sleep(3000);
+        driver.findElement(By.xpath("//div[contains(@class,'field-item dataValueWrite')]/span/button[contains(@class,'Strong pzhc pzbutton')]")).click();
+
+
+        Thread.sleep(4000);
+
+        js.executeScript("document.querySelector(\"main[class*='screen-layout-region screen-layout']\").scrollTo(0,0)");
+
+        //click on Save
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Secondary pzhc pzbutton')]")).click();
+        Thread.sleep(2000);
+        //Click on OK btn in popup
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Strong pzhc pzbutton')]")).click();
+        //Click on Submit Button
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//button[contains(@class,'UL_Strong pzhc pzbutton')]")).click();
+
+        Thread.sleep(5000);
+        //click on Three line Icon
+        driver.findElement(By.xpath("//div[contains(@class,'content-item content-field item-4 flex flex-row left-nav-icons padding-b-3x data')]/span/i/img[contains(@name,'InitiativesPortalNavigation_pyPortalHarness')]")).click();
+
+        Thread.sleep(4000);
+
+
+    //validate project id on dash board
+        List<WebElement> projectIds = driver.findElements(By.xpath("//a[contains(@class,'MDM_Standard_Link')]"));
+
+        {
+
+            try {
+                boolean match = projectIds.stream().anyMatch(Project -> Project.getText().equals(caseProjectID));
+                System.out.println(match);
+                Assert.assertTrue(match);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                System.out.println(e.toString());
+            }
+
+            //
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+        /*Thread.sleep(4000);
+        //Click on Profile Icon
+        driver.findElement(By.xpath("//button[contains(@class,'ico')]")).click();
+        Thread.sleep(3000);
+        List<WebElement> profileIconElements = driver.findElements(By.cssSelector("[role='menuitem'] [class='menu-item-title-wrap'] [class='menu-item-title']"));
+        WebElement logOffIcon = profileIconElements.stream().filter(text->text.getText().equalsIgnoreCase("Log off")).findFirst().orElse(null);
+        logOffIcon.click();
+        driver.manage().deleteAllCookies();
+        Thread.sleep(3000);
+        driver.close();*/
+    }
+}
+
+
+
